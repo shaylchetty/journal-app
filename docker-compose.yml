@@ -1,0 +1,31 @@
+services: # defines runnable components in the application
+  db:
+    image: postgres:16-alpine
+    environment: # initialize the database with the following credentials (autocreates db + user)
+      POSTGRES_USER: journal
+      POSTGRES_PASSWORD: journal
+      POSTGRES_DB: journal
+    ports: # map the container port to the host port
+      - "5432:5432"
+    healthcheck: # check if the database is ready to accept connections
+      test: ["CMD-SHELL", "pg_isready -U journal -d journal"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    volumes: # persist the database data
+      - pgdata:/var/lib/postgresql/data
+
+  api: # build the api container from the api directory
+    build:
+      context: ./services/api
+    environment: # connect to postgres service named db (db is hostname, docker creates a private network)
+      PORT: "8080"
+      DATABASE_URL: "postgres://journal:journal@db:5432/journal?sslmode=disable"
+    ports: # map the container port to the host port
+      - "8080:8080"
+    depends_on: # wait for the database to be ready before starting the api
+      db:
+        condition: service_healthy
+
+volumes: # docker managed disk storage for the database
+  pgdata: # named volume for the database data
