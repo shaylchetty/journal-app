@@ -9,4 +9,4 @@ Day One–style journal app.
 - `docs` — project documentation
 
 ## Dev (coming soon)
-We’ll add a one-command local dev environment (Postgres + API + Web).
+Will add a one-command local dev environment (Postgres + API + Web).
