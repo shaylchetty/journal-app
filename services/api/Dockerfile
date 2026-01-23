@@ -1,7 +1,7 @@
 # ---------- build stage ----------
     
     # starts a container image to compile the code, named as build
-    FROM golang:1.22-alpine AS build 
+    FROM golang:1.24-alpine AS build 
 
     # inside the container, set the working directory to /app
     WORKDIR /app
