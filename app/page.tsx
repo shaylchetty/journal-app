@@ -4,11 +4,30 @@ import { useState, useEffect } from "react"
 import { Calendar } from "@/components/ui/calendar"
 import Editor from "@/components/Editor"
 import { getEntry, saveEntry } from "@/lib/entries"
+import { useRouter } from "next/navigation"
+import { supabase } from "@/lib/supabase"
 
 export default function Home() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [content, setContent] = useState<object | null>(null)
   const [loading, setLoading] = useState(false)
+
+  const router = useRouter()
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!session) router.push("/login")
+    })
+    return () => subscription.unsubscribe()
+  }, [])
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("auth event:", event, "session:", session)
+      if (!session) router.push("/login")
+    })
+    return () => subscription.unsubscribe()
+  }, [])
 
   useEffect(() => {
     async function loadEntry() {
