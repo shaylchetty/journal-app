@@ -1,2 +1,10 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  color: var(--color-zinc-400);
+  pointer-events: none;
+}

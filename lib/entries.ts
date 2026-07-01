@@ -16,7 +16,7 @@ export async function getEntry(date: Date) {
   return data
 }
 
-export async function saveEntry(date: Date, content: object) {
+export async function saveEntry(date: Date, entry: { title: string; content: object }) {
   const dateStr = date.toISOString().split("T")[0]
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) throw new Error("Not logged in")
@@ -24,7 +24,13 @@ export async function saveEntry(date: Date, content: object) {
   const { data, error } = await supabase
     .from("entries")
     .upsert(
-      { date: dateStr, content, updated_at: new Date().toISOString(), user_id: session.user.id },
+      {
+        date: dateStr,
+        title: entry.title,
+        content: entry.content,
+        updated_at: new Date().toISOString(),
+        user_id: session.user.id,
+      },
       { onConflict: "user_id,date" }
     )
     .select()
